@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>企业 AI 原生化诊断 · 你公司在 AI 哪一级？</title>
+  <meta name="description" content="基于 11 等级框架，60 秒测出你公司的 AI 化水平，AI 出个性化诊断书。卿小璐 · AI × 一人公司出品。">
+
+  <style>
+    /* ===== Claude design system tokens ===== */
+    :root {
+      /* Surface */
+      --parchment: #f5f4ed;
+      --ivory: #faf9f5;
+      --white: #ffffff;
+      --warm-sand: #e8e6dc;
+      --deep-dark: #141413;
+      --dark-surface: #30302e;
+
+      /* Brand */
+      --terracotta: #c96442;
+      --terracotta-hover: #b0573a;
+      --coral: #d97757;
+
+      /* Text */
+      --near-black: #141413;
+      --charcoal-warm: #4d4c48;
+      --dark-warm: #3d3d3a;
+      --olive-gray: #5e5d59;
+      --stone-gray: #87867f;
+      --warm-silver: #b0aea5;
+
+      /* Border */
+      --border-cream: #f0eee6;
+      --border-warm: #e8e6dc;
+      --ring-warm: #d1cfc5;
+      --ring-deep: #c2c0b6;
+
+      /* Semantic */
+      --focus-blue: #3898ec;
+      --error: #b53333;
+
+      /* Type */
+      --font-serif: "Anthropic Serif", "Source Han Serif SC", "Noto Serif SC", "Songti SC", Georgia, "Times New Roman", serif;
+      --font-sans: "Anthropic Sans", -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, Arial, sans-serif;
+      --font-mono: "Anthropic Mono", "SF Mono", "Menlo", "Monaco", monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      font-family: var(--font-sans);
+      background: var(--parchment);
+      color: var(--near-black);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      font-size: 16px;
+    }
+
+    /* ===== Layout ===== */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 24px 96px;
+      min-height: 100vh;
+    }
+
+    /* ===== Header ===== */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 4px 28px;
+      border-bottom: 1px solid var(--border-cream);
+      margin-bottom: 36px;
+    }
+
+    .brand {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--near-black);
+      letter-spacing: -0.2px;
+    }
+
+    .brand-dot {
+      color: var(--terracotta);
+      margin: 0 6px;
+    }
+
+    .doc-no {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--stone-gray);
+      letter-spacing: 1.5px;
+    }
+
+    /* ===== Progress ===== */
+    .progress-wrap { margin-bottom: 28px; }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--stone-gray);
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .progress-bar {
+      height: 2px;
+      background: var(--border-warm);
+      border-radius: 0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--terracotta);
+      width: 0%;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ===== Card ===== */
+    .card {
+      background: var(--ivory);
+      border: 1px solid var(--border-cream);
+      border-radius: 16px;
+      padding: 44px 36px;
+      box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 24px;
+      animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Cover ===== */
+    .overline {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--stone-gray);
+      margin-bottom: 18px;
+    }
+
+    h1.cover-title {
+      font-family: var(--font-serif);
+      font-size: 38px;
+      font-weight: 500;
+      color: var(--near-black);
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+    }
+
+    .cover-sub {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      color: var(--olive-gray);
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+
+    .cover-sub strong {
+      color: var(--near-black);
+      font-weight: 500;
+    }
+
+    .cover-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin: 32px -4px 36px;
+      border-top: 1px solid var(--border-warm);
+      border-bottom: 1px solid var(--border-warm);
+    }
+
+    .meta-item {
+      padding: 20px 12px;
+      text-align: center;
+      border-right: 1px solid var(--border-warm);
+    }
+
+    .meta-item:last-child { border-right: none; }
+
+    .meta-num {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 500;
+      color: var(--terracotta);
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .meta-label {
+      font-size: 12px;
+      color: var(--stone-gray);
+      margin-top: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ===== Question card ===== */
+    .q-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .q-id {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--terracotta);
+      background: rgba(201, 100, 66, 0.08);
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+
+    .q-part {
+      font-size: 11px;
+      color: var(--stone-gray);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .q-title {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--near-black);
+      line-height: 1.35;
+      letter-spacing: -0.2px;
+      margin-bottom: 12px;
+    }
+
+    .q-optional {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--stone-gray);
+      letter-spacing: 0;
+    }
+
+    .q-hint {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      color: var(--olive-gray);
+      line-height: 1.6;
+      margin-bottom: 28px;
+      padding-left: 12px;
+      border-left: 2px solid var(--border-warm);
+    }
+
+    /* ===== Options ===== */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      background: var(--white);
+      border: 1px solid var(--border-cream);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-size: 15px;
+      color: var(--charcoal-warm);
+      user-select: none;
+      box-shadow: var(--border-cream) 0px 0px 0px 0px;
+    }
+
+    .option:hover {
+      background: var(--warm-sand);
+      box-shadow: var(--ring-warm) 0px 0px 0px 1px;
+    }
+
+    .option.selected {
+      background: var(--white);
+      border-color: var(--terracotta);
+      color: var(--near-black);
+      box-shadow: var(--terracotta) 0px 0px 0px 1px;
+    }
+
+    .option-mark {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid var(--ring-deep);
+      margin-right: 14px;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.15s ease;
+    }
+
+    .option.selected .option-mark {
+      border-color: var(--terracotta);
+      background: var(--terracotta);
+    }
+
+    .option.selected .option-mark::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
+      height: 6px;
+      background: var(--ivory);
+      border-radius: 50%;
+    }
+
+    /* multi-select square */
+    .option-multi .option-mark { border-radius: 4px; }
+    .option-multi.selected .option-mark::after {
+      content: '✓';
+      color: var(--ivory);
+      font-size: 11px;
+      font-weight: 700;
+      background: transparent;
+      width: auto;
+      height: auto;
+    }
+
+    /* ===== Inputs ===== */
+    input[type="text"], select, textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border-warm);
+      border-radius: 12px;
+      font-size: 16px;
+      font-family: var(--font-sans);
+      color: var(--near-black);
+      background: var(--white);
+      transition: all 0.15s ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="text"]:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--focus-blue);
+      box-shadow: var(--focus-blue) 0px 0px 0px 1px;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2387867f' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.65;
+      font-family: var(--font-serif);
+    }
+
+    .char-count {
+      text-align: right;
+      font-size: 11px;
+      color: var(--stone-gray);
+      margin-top: 6px;
+      font-family: var(--font-mono);
+    }
+
+    .field-group { margin-bottom: 28px; }
+
+    /* ===== Buttons ===== */
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      flex: 1;
+      letter-spacing: 0.1px;
+    }
+
+    .btn-primary {
+      background: var(--terracotta);
+      color: var(--ivory);
+      box-shadow: var(--terracotta) 0px 0px 0px 1px;
+    }
+
+    .btn-primary:hover {
+      background: var(--terracotta-hover);
+      box-shadow: var(--terracotta-hover) 0px 0px 0px 1px;
+    }
+
+    .btn-primary:disabled {
+      background: var(--warm-sand);
+      color: var(--stone-gray);
+      cursor: not-allowed;
+      box-shadow: var(--border-warm) 0px 0px 0px 1px;
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--charcoal-warm);
+      flex: 0 0 auto;
+      padding: 12px 20px;
+      box-shadow: var(--ring-warm) 0px 0px 0px 1px;
+    }
+
+    .btn-secondary:hover {
+      background: var(--warm-sand);
+      box-shadow: var(--ring-deep) 0px 0px 0px 1px;
+    }
+
+    .btn-large {
+      width: 100%;
+      padding: 16px 24px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    /* ===== Loading ===== */
+    .loading-state {
+      text-align: center;
+      padding: 60px 20px 50px;
+    }
+
+    .loading-mark {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 28px;
+      position: relative;
+    }
+
+    .loading-mark::before, .loading-mark::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid transparent;
+    }
+
+    .loading-mark::before {
+      border-top-color: var(--terracotta);
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-mark::after {
+      border-right-color: var(--coral);
+      animation: spin 1.5s linear infinite reverse;
+      inset: 6px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--near-black);
+      margin-bottom: 10px;
+    }
+
+    .loading-step {
+      font-size: 13px;
+      color: var(--olive-gray);
+      letter-spacing: 0.3px;
+      font-style: italic;
+    }
+
+    /* ===== Result ===== */
+    .result-header {
+      text-align: center;
+      padding: 8px 0 32px;
+      border-bottom: 1px solid var(--border-warm);
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .result-stamp {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--terracotta);
+      letter-spacing: 2px;
+      padding: 6px 14px;
+      border: 1px solid var(--terracotta);
+      border-radius: 2px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .result-level-num {
+      font-family: var(--font-serif);
+      font-size: 72px;
+      font-weight: 500;
+      color: var(--terracotta);
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .result-level-name {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--near-black);
+      margin-bottom: 12px;
+      letter-spacing: -0.3px;
+    }
+
+    .result-level-tagline {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      color: var(--olive-gray);
+      font-style: italic;
+    }
+
+    .result-content {
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--charcoal-warm);
+      font-family: var(--font-serif);
+    }
+
+    .result-content h1 {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--near-black);
+      margin: 36px 0 14px;
+      letter-spacing: -0.2px;
+      line-height: 1.3;
+    }
+
+    .result-content h2 {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--near-black);
+      margin: 24px 0 10px;
+    }
+
+    .result-content p { margin-bottom: 14px; }
+
+    .result-content ol, .result-content ul {
+      margin: 10px 0 16px 22px;
+    }
+
+    .result-content li { margin-bottom: 10px; }
+
+    .result-content strong {
+      color: var(--near-black);
+      font-weight: 500;
+      background: rgba(201, 100, 66, 0.08);
+      padding: 0 4px;
+      border-radius: 3px;
+    }
+
+    .result-footer {
+      margin-top: 44px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border-warm);
+    }
+
+    .cta-box {
+      background: var(--white);
+      border: 1px solid var(--border-warm);
+      border-radius: 14px;
+      padding: 24px 26px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .cta-box::before {
+      content: '"';
+      position: absolute;
+      top: -12px;
+      left: 22px;
+      font-family: var(--font-serif);
+      font-size: 56px;
+      color: var(--terracotta);
+      line-height: 1;
+    }
+
+    .cta-title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--near-black);
+      margin-bottom: 10px;
+      padding-left: 14px;
+    }
+
+    .cta-text {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      color: var(--olive-gray);
+      line-height: 1.7;
+      margin-bottom: 12px;
+      padding-left: 14px;
+    }
+
+    .cta-text strong { color: var(--terracotta); font-weight: 500; }
+
+    .cta-signoff {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--stone-gray);
+      letter-spacing: 0.5px;
+      padding-left: 14px;
+      margin-top: 4px;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--stone-gray);
+      margin-top: 36px;
+      line-height: 1.7;
+      letter-spacing: 0.2px;
+    }
+
+    .footer-note strong {
+      color: var(--charcoal-warm);
+      font-weight: 500;
+    }
+
+    /* ===== Error ===== */
+    .error-banner {
+      background: rgba(181, 51, 51, 0.06);
+      border-left: 2px solid var(--error);
+      padding: 14px 18px;
+      border-radius: 4px;
+      color: var(--error);
+      font-size: 14px;
+      margin-bottom: 18px;
+      font-family: var(--font-serif);
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 540px) {
+      .container { padding: 24px 18px 80px; }
+      .card { padding: 32px 22px; border-radius: 14px; }
+      h1.cover-title { font-size: 28px; }
+      .cover-sub { font-size: 16px; }
+      .meta-num { font-size: 24px; }
+      .q-title { font-size: 20px; }
+      .result-level-num { font-size: 56px; }
+      .result-level-name { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="header">
+      <div class="brand">卿小璐<span class="brand-dot">·</span>AI × 一人公司</div>
+      <div class="doc-no">№ 001 / 2026</div>
+    </header>
+
+    <div class="progress-wrap hidden" id="progressWrap">
+      <div class="progress-meta">
+        <span id="progressLabel">第 1 题 / 共 18 题</span>
+        <span id="progressPercent">5%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <main id="app"></main>
+
+    <div class="footer-note">
+      <p>本测评由 <strong>卿小璐 · AI × 一人公司</strong> 出品。诊断书由 DeepSeek 实时生成。</p>
+      <p style="margin-top:6px;">框架基于卡兹克《AI 水平 10 等级》个体版骨架，企业版由卿小璐改编。</p>
+    </div>
+
+  </div>
+
+  <script>
+    // ===== Question Schema =====
+    const questions = [
+      // Part A — 基础信息
+      { id:'A1', part:'A', type:'text', title:'怎么称呼你？',
+        hint:'随便填，不会公开。', placeholder:'例如：小璐', required:true },
+      { id:'A2', part:'A', type:'select', title:'你所在的行业？',
+        options:['内容/自媒体','电商/零售','教育/培训','咨询/服务','制造业','建筑/工程','互联网/科技','金融','医疗/健康','餐饮/快消','其他'],
+        required:true },
+      { id:'A3', part:'A', type:'select', title:'公司规模？',
+        options:['独立创业者（1 人）','小团队（2-5 人）','小公司（6-20 人）','中型（21-100 人）','大型(101-500 人)','大企业（500+ 人）'],
+        required:true },
+
+      // Part B — 等级定位（10 道是/否，递进）
+      { id:'B1', part:'B', type:'yesno', title:'过去一周，公司里至少有一个人（包括你自己）用 AI 完成了一件具体的工作？',
+        hint:'真实写过 / 用过，不是"听说"或"刷过推文"。' },
+      { id:'B2', part:'B', type:'yesno', title:'公司在正式场合（例会 / 周报 / 全员信）讨论过"用 AI 做某事"？',
+        hint:'是公开议题，不是私下聊。' },
+      { id:'B3', part:'B', type:'yesno', title:'公司至少部署了 1 个 AI 工具（Copilot / 自建账号 / 企业版订阅）？',
+        hint:'是公司买的，不只是某个人自己掏钱订阅。' },
+      { id:'B4', part:'B', type:'yesno', title:'有至少一个部门在用这个工具，月活率超过 50%？',
+        hint:'不是 IT 报喜的覆盖率，是真实使用率。' },
+      { id:'B5', part:'B', type:'yesno', title:'公司至少有 2 个部门各自跑通了 AI 工作流，且效率提升可量化？',
+        hint:'比如"客服响应时长降 40%""内容产量翻 3 倍"这种。' },
+      { id:'B6', part:'B', type:'yesno', title:'公司有专人 / 专岗负责 AI 基础设施（知识库 / Prompt 库 / Skill 库），不是兼任？',
+        hint:'这个人的 KPI 是"让别人更快用 AI"，不是自己用得最厉害。' },
+      { id:'B7', part:'B', type:'yesno', title:'最近 3 个月，公司调整过岗位说明书或合并过岗位，原因是"AI 接管了一部分工作"？',
+        hint:'真的改了 JD 或减/并了岗位，不是只在脑子里想。' },
+      { id:'B8', part:'B', type:'yesno', title:'如果今天把所有 AI 工具撤掉，公司的产品形态 / 服务方式 / 收费模式会变样？',
+        hint:'不是"会变难做"，是"产品本身长得不一样"。' },
+      { id:'B9', part:'B', type:'yesno', title:'公司实际员工数 ≤ 5 人，但承担了传统 30+ 人的业务量？',
+        hint:'真的小团队大产出，不是外包/兼职凑数。' },
+      { id:'B10', part:'B', type:'yesno', title:'公司从注册第一天起就是按 AI-native 设计的，没有"AI 化"这个动作？',
+        hint:'从 0 设计就是 AI 原生，不是后期改造。' },
+
+      // Part C — 多维补充
+      { id:'C1', part:'C', type:'multi', title:'公司里用过哪些 AI 工具？',
+        hint:'多选，包括个人订阅 + 公司部署。',
+        options:['ChatGPT','Claude','豆包','Kimi','DeepSeek','文心一言','元宝','Copilot','Cursor','Coze','Dify','MidJourney','Sora','即梦','其他','都没用过'] },
+      { id:'C2', part:'C', type:'multi', title:'AI 已经嵌入哪些业务环节？',
+        hint:'多选。"嵌入"指流程的一部分，不是偶尔用一下。',
+        options:['写文章 / 内容','客服','招聘 / HR','数据分析','编程 / 开发','设计 / 出图','财务','销售','产品 / 研发','培训','其他','都没嵌入'] },
+      { id:'C3', part:'C', type:'single', title:'老板个人 AI 水平 vs 公司整体？',
+        hint:'诚实回答，这是诊断"内外差"的关键。',
+        options:['差不多','老板略高一些','老板明显高出一截','天差地别（老板单飞）','老板还不如员工'] },
+
+      // Part D — 开放题
+      { id:'D1', part:'D', type:'textarea', title:'你公司用 AI 最大的卡点是什么？',
+        hint:'越具体越好——AI 会基于这条给你"个性化诊断"。例如："员工觉得 AI 不靠谱，让他用他就糊弄。"',
+        placeholder:'200 字内，越具体越好', required:true, maxLen:200 },
+      { id:'D2', part:'D', type:'textarea', title:'想从这份诊断书里得到什么具体建议？',
+        hint:'选填。比如"下一季度该投谁去学 AI""哪个部门先动手"。',
+        placeholder:'选填，200 字内', required:false, maxLen:200 },
+    ];
+
+    // ===== State =====
+    const state = { step: -1, answers: {}, result: null };
+    const app = document.getElementById('app');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressFill = document.getElementById('progressFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const progressPercent = document.getElementById('progressPercent');
+
+    // ===== Render: Welcome =====
+    function renderWelcome() {
+      progressWrap.classList.add('hidden');
+      app.innerHTML = `
+        <div class="card">
+          <div class="overline">企业 AI 原生化诊断 · v1.0</div>
+          <h1 class="cover-title">你公司在 AI 哪一级？<br/>11 级框架，一次测清楚。</h1>
+          <p class="cover-sub">基于卡兹克《AI 水平 10 等级》个体版骨架 + 艾瑞咨询 2026 Q1 数据校准，卿小璐改编成企业版。<br/>测完你会拿到一份 <strong>DeepSeek 实时生成</strong> 的个性化诊断书。</p>
+
+          <div class="cover-meta">
+            <div class="meta-item"><div class="meta-num">${questions.length}</div><div class="meta-label">道题</div></div>
+            <div class="meta-item"><div class="meta-num">6–10</div><div class="meta-label">分钟</div></div>
+            <div class="meta-item"><div class="meta-num">11</div><div class="meta-label">等级判定</div></div>
+          </div>
+
+          <button class="btn btn-primary btn-large" onclick="next()">开始诊断 →</button>
+        </div>
+      `;
+    }
+
+    // ===== Render: Question =====
+    function renderQuestion() {
+      const q = questions[state.step];
+      const total = questions.length;
+      progressWrap.classList.remove('hidden');
+      const pct = Math.round(((state.step + 1) / total) * 100);
+      progressFill.style.width = pct + '%';
+      progressLabel.textContent = `第 ${state.step + 1} 题 / 共 ${total} 题 · Part ${q.part}`;
+      progressPercent.textContent = pct + '%';
+
+      let body = '';
+      const cur = state.answers[q.id];
+
+      if (q.type === 'text') {
+        body = `<div class="field-group">
+          <input type="text" id="qInput" placeholder="${q.placeholder || ''}" value="${cur || ''}" oninput="onTextChange(this.value)" maxlength="40">
+        </div>`;
+      } else if (q.type === 'select') {
+        body = `<div class="field-group">
+          <select id="qInput" onchange="onTextChange(this.value)">
+            <option value="">请选择...</option>
+            ${q.options.map(opt => `<option value="${opt}" ${cur===opt?'selected':''}>${opt}</option>`).join('')}
+          </select>
+        </div>`;
+      } else if (q.type === 'yesno') {
+        body = `<div class="options">
+          <div class="option ${cur==='是'?'selected':''}" onclick="selectOption('是')">
+            <div class="option-mark"></div><span>是</span>
+          </div>
+          <div class="option ${cur==='否'?'selected':''}" onclick="selectOption('否')">
+            <div class="option-mark"></div><span>否</span>
+          </div>
+        </div>`;
+      } else if (q.type === 'single') {
+        body = `<div class="options">
+          ${q.options.map(opt => `
+            <div class="option ${cur===opt?'selected':''}" onclick="selectOption('${opt.replace(/'/g,"\\'")}')">
+              <div class="option-mark"></div><span>${opt}</span>
+            </div>
+          `).join('')}
+        </div>`;
+      } else if (q.type === 'multi') {
+        const arr = cur || [];
+        body = `<div class="options">
+          ${q.options.map(opt => `
+            <div class="option option-multi ${arr.includes(opt)?'selected':''}" onclick="toggleMulti('${opt.replace(/'/g,"\\'")}')">
+              <div class="option-mark"></div><span>${opt}</span>
+            </div>
+          `).join('')}
+        </div>`;
+      } else if (q.type === 'textarea') {
+        const val = cur || '';
+        body = `<div class="field-group">
+          <textarea id="qInput" placeholder="${q.placeholder || ''}" maxlength="${q.maxLen || 500}" oninput="onTextChange(this.value); updateCount(this.value.length, ${q.maxLen || 500})">${val}</textarea>
+          <div class="char-count" id="charCount">${val.length} / ${q.maxLen || 500}</div>
+        </div>`;
+      }
+
+      const isLast = state.step === total - 1;
+      const nextLabel = isLast ? '提交并生成诊断书 →' : '下一题 →';
+      const optionalTag = q.required === false ? '<span class="q-optional"> · 选填</span>' : '';
+
+      app.innerHTML = `
+        <div class="card">
+          <div class="q-meta">
+            <span class="q-id">${q.id}</span>
+            <span class="q-part">Part ${q.part}</span>
+          </div>
+          <div class="q-title">${q.title}${optionalTag}</div>
+          ${q.hint ? `<div class="q-hint">${q.hint}</div>` : ''}
+          ${body}
+          <div class="nav-buttons">
+            ${state.step > 0 ? `<button class="btn btn-secondary" onclick="prev()">← 上一题</button>` : ''}
+            <button class="btn btn-primary" id="nextBtn" onclick="next()" ${isValidAnswer(q)?'':'disabled'}>${nextLabel}</button>
+          </div>
+        </div>
+      `;
+
+      setTimeout(() => {
+        const inp = document.getElementById('qInput');
+        if (inp && (q.type==='text' || q.type==='textarea')) inp.focus();
+      }, 60);
+    }
+
+    // ===== Render: Loading =====
+    function renderLoading(idx) {
+      progressWrap.classList.add('hidden');
+      const steps = [
+        '正在分析你的等级判定…',
+        '正在结合你的行业 / 规模做个性化校准…',
+        '正在生成跨级路径…',
+        '诊断书快好了，再等几秒…'
+      ];
+      app.innerHTML = `
+        <div class="card loading-state">
+          <div class="loading-mark"></div>
+          <div class="loading-title">正在为你出诊断书</div>
+          <div class="loading-step">${steps[idx % steps.length]}</div>
+        </div>
+      `;
+    }
+
+    // ===== Render: Result =====
+    function renderResult() {
+      progressWrap.classList.add('hidden');
+      const r = state.result;
+      app.innerHTML = `
+        <div class="card">
+          <div class="result-header">
+            <div class="result-stamp">企业 AI 原生化诊断书</div>
+            <div class="result-level-num">Lv.${r.level}</div>
+            <div class="result-level-name">${r.levelName}</div>
+            <div class="result-level-tagline">${r.tagline || ''}</div>
+          </div>
+
+          <div class="result-content">${r.html}</div>
+
+          <div class="result-footer">
+            <div class="cta-box">
+              <div class="cta-title">想要一句话点评？</div>
+              <div class="cta-text">这份诊断书是 AI 通用版。<strong>如果想要卿小璐基于你的等级 + 行业 + 卡点给一句具体点评</strong>，把诊断截图发到我私域，回复"测评"。</div>
+              <div class="cta-signoff">— 卿小璐 · AI × 一人公司</div>
+            </div>
+            <div class="result-actions">
+              <button class="btn btn-primary" onclick="restart()">重新测一遍</button>
+              <button class="btn btn-secondary" onclick="copyResult()">复制全文</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderError(msg) {
+      progressWrap.classList.add('hidden');
+      app.innerHTML = `
+        <div class="card">
+          <div class="error-banner">${msg}</div>
+          <p style="color:var(--olive-gray);font-size:14px;margin-bottom:24px;font-family:var(--font-serif);">你的答题数据还在，可以再试一次。如果反复出错，私信卿小璐反馈。</p>
+          <button class="btn btn-primary btn-large" onclick="submit()">重试生成诊断书</button>
+        </div>
+      `;
+    }
+
+    // ===== Handlers =====
+    window.next = function() {
+      if (state.step === -1) { state.step = 0; renderQuestion(); return; }
+      const q = questions[state.step];
+      if (!isValidAnswer(q)) return;
+      if (state.step === questions.length - 1) { submit(); }
+      else { state.step++; renderQuestion(); }
+    };
+
+    window.prev = function() {
+      if (state.step > 0) { state.step--; renderQuestion(); }
+    };
+
+    window.onTextChange = function(val) {
+      const q = questions[state.step];
+      state.answers[q.id] = val;
+      const btn = document.getElementById('nextBtn');
+      if (btn) btn.disabled = !isValidAnswer(q);
+    };
+
+    window.updateCount = function(n, max) {
+      const el = document.getElementById('charCount');
+      if (el) el.textContent = `${n} / ${max}`;
+    };
+
+    window.selectOption = function(val) {
+      const q = questions[state.step];
+      state.answers[q.id] = val;
+      if (q.type === 'yesno' || q.type === 'single') {
+        setTimeout(() => {
+          if (state.step === questions.length - 1) renderQuestion();
+          else { state.step++; renderQuestion(); }
+        }, 240);
+      } else {
+        renderQuestion();
+      }
+    };
+
+    window.toggleMulti = function(val) {
+      const q = questions[state.step];
+      const arr = state.answers[q.id] || [];
+      const i = arr.indexOf(val);
+      if (i >= 0) arr.splice(i, 1); else arr.push(val);
+      state.answers[q.id] = arr;
+      renderQuestion();
+    };
+
+    function isValidAnswer(q) {
+      const v = state.answers[q.id];
+      if (q.required === false) return true;
+      if (q.type === 'multi') return Array.isArray(v) && v.length > 0;
+      if (q.type === 'textarea') return typeof v === 'string' && v.trim().length >= 5;
+      return v !== undefined && v !== null && (typeof v !== 'string' || v.trim().length > 0);
+    }
+
+    window.submit = async function() {
+      state.step = questions.length;
+      let idx = 0;
+      renderLoading(0);
+      const intv = setInterval(() => { idx++; renderLoading(idx); }, 3500);
+      try {
+        const resp = await fetch('/api/diagnose', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ answers: state.answers })
+        });
+        clearInterval(intv);
+        if (!resp.ok) {
+          const errText = await resp.text();
+          throw new Error(`服务返回 ${resp.status}：${errText.slice(0,160)}`);
+        }
+        const data = await resp.json();
+        state.result = data;
+        state.step = questions.length + 1;
+        renderResult();
+      } catch (e) {
+        clearInterval(intv);
+        renderError('生成诊断书时出了点问题：' + (e.message || '未知错误'));
+      }
+    };
+
+    window.restart = function() {
+      state.step = -1; state.answers = {}; state.result = null;
+      renderWelcome();
+    };
+
+    window.copyResult = function() {
+      const r = state.result;
+      const tmp = document.createElement('div');
+      tmp.innerHTML = r.html;
+      const text = `【企业 AI 原生化诊断书】\n\nLv.${r.level} · ${r.levelName}\n${r.tagline||''}\n\n${tmp.innerText}\n\n— 卿小璐 · AI × 一人公司`;
+      navigator.clipboard.writeText(text).then(() => alert('已复制到剪贴板'));
+    };
+
+    renderWelcome();
+  </script>
+</body>
+</html>

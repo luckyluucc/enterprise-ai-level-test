@@ -1,0 +1,9 @@
+{
+  "name": "enterprise-ai-level-test",
+  "version": "1.0.0",
+  "private": true,
+  "description": "企业 AI 原生化诊断 · 11 等级框架 · 卿小璐 / AI × 一人公司",
+  "engines": {
+    "node": ">=18"
+  }
+}
