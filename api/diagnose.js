@@ -319,9 +319,9 @@ async function writeFeishu(answers, lvInfo, domains, info, md) {
     '组织重构分': domains.org,
     '系统沉淀分': domains.system,
     '降级原因': (lvInfo.reasons || []).join('；'),
-    '团队卡点 D1': answers.D1 || '',
-    '业务方向 D2': answers.D2 || '',
-    '技术底子 D3': answers.D3 || '',
+    '团队卡点 D1': answers.C5 || '',  // v3: 前端 D 区合并到 C 区，团队卡点 = C5
+    '业务方向 D2': '（见 E1 工作流拆解）',  // v3: 业务方向并入 E1 自由文本
+    '技术底子 D3': answers.C4 || '',  // v3: 技术底子 = C4
     '推不动场景 E2': answers.E2 || '',
     '工作流拆解 E1': answers.E1 || '',
     '焦虑/疑问 E3': answers.E3 || '',
