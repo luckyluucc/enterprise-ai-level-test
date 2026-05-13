@@ -278,6 +278,69 @@ function inline(s) {
     .replace(/`([^`]+)`/g, '<code>$1</code>');
 }
 
+// ===== Feishu Base 写入（fire-and-forget，写失败不影响诊断返回）=====
+let _feishuToken = null;
+let _feishuTokenExpiry = 0;
+
+async function getFeishuToken() {
+  const now = Date.now();
+  if (_feishuToken && now < _feishuTokenExpiry) return _feishuToken;
+  const appId = process.env.FEISHU_APP_ID;
+  const appSecret = process.env.FEISHU_APP_SECRET;
+  if (!appId || !appSecret) return null;
+  const r = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ app_id: appId, app_secret: appSecret }),
+  });
+  const d = await r.json();
+  if (d.code !== 0) throw new Error(`Feishu auth: ${d.msg}`);
+  _feishuToken = d.tenant_access_token;
+  _feishuTokenExpiry = now + (d.expire - 60) * 1000;
+  return _feishuToken;
+}
+
+async function writeFeishu(answers, lvInfo, domains, info, md) {
+  const baseToken = process.env.FEISHU_BASE_TOKEN;
+  const tableId = process.env.FEISHU_TABLE_ID;
+  if (!baseToken || !tableId) return { skipped: true, reason: 'no FEISHU_BASE_TOKEN/TABLE_ID' };
+  const token = await getFeishuToken();
+  if (!token) return { skipped: true, reason: 'no FEISHU_APP credentials' };
+
+  const fields = {
+    '称呼': answers.A1 || '',
+    '行业': answers.A2 || '',
+    '公司规模': answers.A3 || '',
+    '等级 L': lvInfo.lv,
+    '阶段名': info.name || '',
+    'B 区累加分': lvInfo.bSum,
+    '个人能力分': domains.personal,
+    '团队渗透分': domains.team,
+    '组织重构分': domains.org,
+    '系统沉淀分': domains.system,
+    '降级原因': (lvInfo.reasons || []).join('；'),
+    '团队卡点 D1': answers.D1 || '',
+    '业务方向 D2': answers.D2 || '',
+    '技术底子 D3': answers.D3 || '',
+    '推不动场景 E2': answers.E2 || '',
+    '工作流拆解 E1': answers.E1 || '',
+    '焦虑/疑问 E3': answers.E3 || '',
+    '想要建议 E4': answers.E4 || '',
+    '完整答案 JSON': JSON.stringify(answers).slice(0, 9000),
+    'AI 诊断书 markdown': (md || '').slice(0, 9000),
+  };
+
+  const url = `https://open.feishu.cn/open-apis/bitable/v1/apps/${baseToken}/tables/${tableId}/records`;
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ fields }),
+  });
+  const d = await r.json();
+  if (d.code !== 0) throw new Error(`Feishu write: ${d.msg}`);
+  return { ok: true, record_id: d.data?.record?.record_id };
+}
+
 async function callDeepSeek(prompt, apiKey) {
   const resp = await fetch('https://api.deepseek.com/chat/completions', {
     method: 'POST',
@@ -336,6 +399,11 @@ module.exports = async (req, res) => {
     let md = mdRaw.trim();
     md = md.replace(/^```[a-z]*\n?/i, '').replace(/\n?```$/, '');
     const html = mdToHtml(md);
+
+    // fire-and-forget write to Feishu Base — 失败不影响用户拿到诊断
+    writeFeishu(answers, lvInfo, domains, info, md)
+      .then(r => { if (!r.skipped) console.log('Feishu write:', r); })
+      .catch(e => console.error('Feishu write failed:', e.message));
 
     return res.status(200).json({
       level: lvInfo.lv,
