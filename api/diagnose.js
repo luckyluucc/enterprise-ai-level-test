@@ -393,6 +393,18 @@ module.exports = async (req, res) => {
     const info = LEVEL_TABLE[lvInfo.lv];
     const domains = computeDomains(answers);
 
+    // 兜底 1：每次提交立刻打到 runtime log（飞书写失败也能从 vercel logs 捞回）
+    const submissionId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    console.log('SUBMISSION_BACKUP', JSON.stringify({
+      submissionId,
+      ts: new Date().toISOString(),
+      lv: lvInfo.lv,
+      bSum: lvInfo.bSum,
+      domains,
+      downgradeReasons: lvInfo.reasons,
+      answers,
+    }));
+
     const prompt = buildPrompt(answers, lvInfo, domains);
     const mdRaw = await callDeepSeek(prompt, apiKey);
 
@@ -402,8 +414,15 @@ module.exports = async (req, res) => {
 
     // fire-and-forget write to Feishu Base — 失败不影响用户拿到诊断
     writeFeishu(answers, lvInfo, domains, info, md)
-      .then(r => { if (!r.skipped) console.log('Feishu write:', r); })
-      .catch(e => console.error('Feishu write failed:', e.message));
+      .then(r => {
+        if (r.skipped) console.warn('FEISHU_SKIPPED', submissionId, r.reason);
+        else console.log('FEISHU_OK', submissionId, r.record_id);
+      })
+      .catch(e => {
+        // 兜底 2：飞书写入失败，打超显眼标签 + 完整诊断 markdown，方便 vercel logs --since=Xh | grep FEISHU_FAILED 捞回
+        console.error('FEISHU_FAILED', submissionId, e.message);
+        console.error('FEISHU_FAILED_DATA', JSON.stringify({ submissionId, answers, lvInfo, domains, md }));
+      });
 
     return res.status(200).json({
       level: lvInfo.lv,
