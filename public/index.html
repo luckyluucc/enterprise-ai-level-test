@@ -628,23 +628,22 @@
       background: var(--white);
       border: 1px solid var(--border-soft);
       border-radius: 12px;
-      padding: 18px;
+      padding: 22px 18px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
     }
 
     .cta-qr-img {
-      width: 110px;
-      height: 110px;
-      flex-shrink: 0;
-      border-radius: 8px;
+      width: 180px;
+      height: 180px;
+      border-radius: 10px;
       object-fit: cover;
     }
 
     .cta-qr-info {
-      flex: 1;
-      min-width: 0;
+      text-align: center;
     }
 
     .cta-qr-info .wechat-label {
@@ -655,7 +654,7 @@
     }
 
     .cta-qr-info .wechat-id {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--text);
       font-family: var(--font-mono);
@@ -667,6 +666,84 @@
       font-size: 13px;
       color: var(--text-soft);
       line-height: 1.5;
+    }
+
+    /* ===== 4 板块能力图 ===== */
+    .domain-wrap {
+      background: var(--light);
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin: 20px 0 28px;
+    }
+
+    .domain-wrap-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+      letter-spacing: 0.3px;
+    }
+
+    .domain-wrap-title .domain-wrap-sub {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--gray);
+      margin-left: 8px;
+    }
+
+    .domain-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .domain-row:last-child { margin-bottom: 0; }
+
+    .domain-label {
+      font-size: 13px;
+      color: var(--dark-gray);
+      width: 70px;
+      flex-shrink: 0;
+    }
+
+    .domain-bar {
+      flex: 1;
+      height: 10px;
+      background: var(--border-soft);
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .domain-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+      border-radius: 5px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .domain-bar-fill.weak {
+      background: linear-gradient(90deg, #E2E8F0, #CBD5E0);
+    }
+    .domain-bar-fill.medium {
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    }
+    .domain-bar-fill.strong {
+      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    }
+    .domain-bar-fill.excellent {
+      background: linear-gradient(90deg, var(--success), #4FD1C5);
+    }
+
+    .domain-score {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      width: 42px;
+      text-align: right;
+      flex-shrink: 0;
     }
 
     .result-actions {
@@ -741,9 +818,9 @@
   </div>
 
   <script>
-    // ===== Question Schema (13 题) =====
-    // 框架：老板 AI 化 5 阶段（L1 围观 / L2 个人尝鲜 / L3 团队推行 / L4 组织重构 / L5 系统化运转）
-    // 反向设计：围绕受众真正关心的 3 个问题（团队怎么用 / 投入回报 / 非技术能不能）
+    // ===== Question Schema (17 题, v3) =====
+    // 框架：老板 AI 化 5 阶段（L1-L5）；4 板块能力（个人/团队/组织/系统）
+    // 等级算法：B 区 4 道 × 6 档（0-5 分）累加 → L1-L5 + 交叉校验降级，防止乱选最高档
     const questions = [
       // Part A — 基础信息
       { id:'A1', part:'A', type:'text', title:'怎么称呼你？',
@@ -756,18 +833,100 @@
         options:['1 人（独立创业者）','2-9 人（小团队）','10-30 人（小公司）','30-50 人','50-150 人','150+ 人'],
         required:true },
 
-      // Part B — 5 阶段定位（4 道是/否，递进）—— 严格定义，逼老板诚实
-      { id:'B1', part:'B', type:'yesno', title:'上周，你自己用 AI 完成过至少一件具体的工作交付？',
-        hint:'"完成具体交付"指实际拿出可用的东西——一篇推文、一份方案、一段代码、一个客户回复，不是聊聊试试。' },
-      { id:'B2', part:'B', type:'yesno', title:'你的团队，过去 1 个月里，至少 50% 的人在日常工作中实际用 AI？',
-        hint:'PDF 原话：90% 老板高估自己阶段，标准很简单——团队每天工作离不开 AI 才算。周培训用一下、几个先锋在用，都不算。' },
-      { id:'B3', part:'B', type:'yesno', title:'因为 AI 跑通了，过去 3 个月你调整过岗位 / 改过 JD / 合并过岗位？',
-        hint:'真的改了招聘标准或减并了岗位，不是脑子里想想。组织结构开始跟着 AI 变形。' },
-      { id:'B4', part:'B', type:'yesno', title:'你公司有一个共享的 AI 大脑——团队任何人都能调用公司的判断库 / 案例库 / 话术库？',
-        hint:'不是个人的提示词收藏，是公司层的共享上下文。一人输入，全员受益。' },
+      // Part B — 阶段定位（4 题 6 档单选）—— 每档对应 0-5 分，累加 → L1-L5
+      { id:'B1', part:'B', type:'single', title:'上周你自己用 AI 完成了几件具体工作交付？',
+        hint:'"具体交付"指拿出可用产出——一篇推文、一份方案、一段代码、一个客户回复，不是聊聊试试。',
+        options:[
+          '0 件，主要是看新闻、刷推文',
+          '1-2 件，偶尔试一下',
+          '3-5 件，几个稳定场景在用',
+          '几乎每天，5 件以上',
+          '我已经离不开 AI，主要工作流都嵌入了',
+          '我自己用得很顺，重点是把这套传给团队'
+        ] },
+      { id:'B2', part:'B', type:'single', title:'上周你的团队（除了你），有多少人在工作中实际用了 AI？',
+        hint:'"实际用"=用 AI 完成本职工作，不是培训时玩一下。PDF 原话：90% 老板高估自己阶段，标准很严。',
+        options:[
+          '还没在团队推过',
+          '推过，没人真正用起来',
+          '1-2 个先锋在用（团队不到 30%）',
+          '一半左右（30%-60%）在用',
+          '大多数人（60%+）每天都在用',
+          '全员每天离不开，已融入日常工作流'
+        ] },
+      { id:'B3', part:'B', type:'single', title:'过去 3 个月，你公司因为 AI 调整过组织或岗位吗？',
+        hint:'真动手了，不是脑子里想想。',
+        options:[
+          '完全没动过',
+          '想过，还没动手',
+          '改了 1-2 条 JD（招聘标准变了）',
+          '合并或减掉过某个岗位',
+          '招了新的 AI Native 类岗位',
+          '整个组织结构按 AI 重新设计过'
+        ] },
+      { id:'B4', part:'B', type:'single', title:'你公司的"AI 大脑/共享知识"现状？',
+        hint:'AI 大脑=团队共享的判断库/案例库/话术库，不是个人提示词收藏。',
+        options:[
+          '没这概念',
+          '我个人有一些提示词收藏',
+          '团队有共享的 prompt 库（人工维护）',
+          '有部门级知识库/案例库',
+          '公司级 AI 大脑，全员可调用',
+          'AI 大脑由 AI 自动采集编译（不靠人录入）'
+        ] },
 
-      // Part C — 公司现状（3 题）— 围绕"3 个真正关心的问题"
-      { id:'C1', part:'C', type:'single', title:'问题 1：让团队用起来——你现在卡在哪？',
+      // Part C — 4 板块补题（16 题，每板块 4 题；与 B 区组合每板块共 5 题）
+      // ── 个人能力板块（C1-C4，配 B1） ──
+      { id:'C1', part:'C', type:'multi', title:'你和团队用过哪些 AI 工具？',
+        hint:'多选。判断工具栈广度。诚实回答——会校验 B 区分数。',
+        options:[
+          'ChatGPT',
+          'Claude',
+          '豆包',
+          'Kimi',
+          'DeepSeek',
+          '文心一言 / 元宝',
+          'Cursor / Copilot（编程类）',
+          'Coze / Dify / n8n（搭 Agent / 自动化工作流）',
+          '飞书 / 钉钉 / 企微的 AI 助手',
+          'MidJourney / 即梦 / Sora（图片视频）',
+          'Claude Code / Codex（Vibe coding）',
+          '都没用过'
+        ] },
+      { id:'C2', part:'C', type:'single', title:'你自己最常用的那个 AI，平均每天用多久？',
+        hint:'诚实点。判断个人 AI 化是真的还是装的。',
+        options:[
+          '还没真正在用',
+          '偶尔用，不到 10 分钟/天',
+          '10-30 分钟/天',
+          '30 分钟-1 小时/天',
+          '1-3 小时/天',
+          '3+ 小时，AI 是我主要工作工具'
+        ] },
+      { id:'C3', part:'C', type:'multi', title:'你自己用 AI 主要做什么？',
+        hint:'多选。判断你的 AI 用法深度——勾的层级越高，个人能力越深。',
+        options:[
+          '聊天问问题',
+          '写文案 / 写材料',
+          '出图 / 设计',
+          '写代码片段',
+          '写过结构化 prompt 跑业务流',
+          '搭过 Agent / Skill / Custom GPT',
+          '接过 API / MCP，让 AI 自动操作'
+        ] },
+      { id:'C4', part:'C', type:'single', title:'你和团队的技术底子？',
+        hint:'2026 年 AI 不需要懂技术，但诚实回答，AI 会用你听得懂的话给建议。',
+        options:[
+          '都没技术背景，怕搞不来',
+          '我懂一点，团队完全不懂',
+          '我懂技术，团队不懂',
+          '大家都不算技术，但学习能力还行',
+          '团队里有几个挺会折腾 AI 的',
+          '团队有 IT / 开发顶大头'
+        ] },
+
+      // ── 团队渗透板块（C5-C8，配 B2） ──
+      { id:'C5', part:'C', type:'single', title:'让团队用起来——你现在卡在哪？',
         hint:'PDF 原话：推动团队 AI 化不是培训问题，是管理问题。',
         options:[
           '我自己还没真正开始',
@@ -777,40 +936,137 @@
           '少数几个人在用，多数人不用',
           '全员每天都在用'
         ] },
-      { id:'C2', part:'C', type:'single', title:'问题 2：投入回报——你最想让 AI 把哪件事的速度或成本变好？',
-        hint:'选一个最痛、最重复、你每天都在做的。后面会让你算个具体数字。',
+      { id:'C6', part:'C', type:'single', title:'你把 AI 推到团队主要靠什么方式？',
+        hint:'PDF 原话：培训没用，嵌入才有用。',
         options:[
-          '内容生产（推文/视频/物料）',
-          '销售管理（线索/转化/外呼）',
-          '客户管理（私域/SOP/CRM）',
-          '客服（响应/分流）',
-          '知识管理（沉淀方法论/复制经验）',
-          '内部协作（会议/文档/流程）',
-          '招聘/HR',
-          '财务/数据分析',
-          '产品研发/设计',
-          '其他'
+          '还没推',
+          '我在群里口头说"大家都要用"',
+          '搞过 1-2 次脱产培训',
+          '写进了流程 / SOP 文档',
+          '把 AI 嵌入了日常工作群（飞书机器人 / 一键按钮）',
+          '加进了 KPI / 绩效考核'
         ] },
-      { id:'C3', part:'C', type:'single', title:'问题 3：非技术能不能搞——你和团队的技术底子？',
-        hint:'PDF 原话：2026 年的 AI 不需要懂技术，门槛在认知和决心。但你诚实告诉我现状，AI 会用你听得懂的话给建议。',
+      { id:'C7', part:'C', type:'single', title:'团队拒绝或糊弄用 AI 最常见的原因？',
+        hint:'诚实选一个最贴近的。',
         options:[
-          '都没技术背景，怕搞不来',
-          '我懂一点，团队完全不懂',
-          '我懂技术，团队不懂',
-          '大家都不算技术，但学习能力还行',
-          '团队里有几个挺会折腾 AI 的',
-          '团队有 IT/开发顶大头'
+          '团队已经在用，没这问题',
+          '没人正经推过，无所谓',
+          '不会用，学习成本太高',
+          '觉得 AI 不靠谱 / 没人情味',
+          '觉得跟自己工作没关系',
+          '怕 AI 把自己替代了'
+        ] },
+      { id:'C8', part:'C', type:'single', title:'团队是否对比过 AI 产出 vs 人工产出？',
+        hint:'PDF 原话：让团队亲眼看到结果，比讲道理有用 10 倍。',
+        options:[
+          '没对比过',
+          '我自己心里有数，没正经做过对比',
+          '小范围做过一次对比给团队看',
+          '常态化对比（每周 / 每月）',
+          'AI 已经做主力，人审核',
+          'AI 全跑，没人对比这个事了'
         ] },
 
-      // Part D — 开放题（3 题，必填 2 选填 1）
-      { id:'D1', part:'D', type:'textarea', title:'讲一个具体场景：你尝试让团队用 AI，最后没推动的那一次。',
-        hint:'越具体越好。例如："上次让客服用 AI 回客户消息，他说『AI 答的没人情味』就放弃了"。诊断书会基于这条给你回应。',
+      // ── 组织重构板块（C9-C12，配 B3） ──
+      { id:'C9', part:'C', type:'multi', title:'过去 6 个月，你因为 AI 做过哪些具体的组织动作？',
+        hint:'多选。补充 B3 的颗粒度——B3 问整体，这里问具体动了什么。',
+        options:[
+          '减少了某岗位的招聘量',
+          '改了某岗位 JD，加了 AI 能力要求',
+          '让员工转岗（从手动活转到 AI 协作）',
+          '合并或砍掉了某个岗位',
+          '招了 AI Native 类新岗位（AI 训练师 / Prompt 工程师 / AI 编排师）',
+          '提高了某岗位 KPI（同样人数产出翻倍）',
+          '把"会用 AI"写进了员工绩效考核',
+          '都没有'
+        ] },
+      { id:'C10', part:'C', type:'single', title:'老板（你）vs 员工整体的 AI 水平差距？',
+        hint:'PDF 原话：内外差越大，落地阻力越大。诚实回答。',
+        options:[
+          '差不多',
+          '我略高一些',
+          '我明显高出一截',
+          '天差地别（我单飞）',
+          '我还不如某些员工',
+          '不知道，没真做过对比'
+        ] },
+      { id:'C11', part:'C', type:'single', title:'你公司的 AI 使用度，是否写进了 KPI / 绩效？',
+        hint:'PDF 原话：靠意志力推 AI 必败，靠 KPI 推才能跨过 L3。',
+        options:[
+          '没考核',
+          '嘴上提，没写进考核',
+          '部分关键岗位（销售 / 内容）写进了 KPI',
+          '全岗位 KPI 含 AI 使用度',
+          '不达标会被淘汰',
+          'AI 产出本身就是 KPI（不分 AI 与非 AI）'
+        ] },
+      { id:'C12', part:'C', type:'single', title:'你把"30 人以下团队"的小快灵优势用上了吗？',
+        hint:'PDF 原话：小团队最大优势=决策链短、试错成本低、一通知全员切。',
+        options:[
+          '完全没用上，跟大公司一样慢',
+          '想动但卡在自己决策上',
+          '想换工具/流程时能 1 天内全员切',
+          '每周都在小步试错 / 切换',
+          '已经把"小快灵"变成日常工作节奏',
+          '我们就是按 AI 原生设计的，速度是核心优势'
+        ] },
+
+      // ── 系统沉淀板块（C13-C16，配 B4） ──
+      { id:'C13', part:'C', type:'multi', title:'下面这些 AI 概念/能力，你或团队接触过哪些？',
+        hint:'多选。判断你的 AI 栈深度。',
+        options:[
+          '写过结构化 prompt（不只是聊天）',
+          '给 AI 喂过知识库 / 文档当上下文',
+          '用过 Agent / Skill / Custom GPT',
+          '接入过 MCP / API（让 AI 自动操作）',
+          '搭过自动化工作流（Coze / Dify / 飞书机器人）',
+          '用过 Cursor / Claude Code / Vibe coding',
+          '都不懂这些，主要是聊天问问题'
+        ] },
+      { id:'C14', part:'C', type:'single', title:'你公司的 SOP 现在长什么样？',
+        hint:'PDF 原话：AI 时代 SOP 不是给人看的，是给 AI 执行的。',
+        options:[
+          '没 SOP',
+          '写在 Word / 飞书文档里（人看的）',
+          '部分写成了 prompt 模板',
+          '写成了 Skill / Agent 配置（AI 执行）',
+          'AI 能根据反馈自动迭代 SOP',
+          '关键工作流没人写 SOP——AI 直接跑'
+        ] },
+      { id:'C15', part:'C', type:'single', title:'你公司的 AI 知识/经验是怎么沉淀的？',
+        hint:'PDF 原话：靠人工录入的知识库，3 个月后必然荒废。',
+        options:[
+          '没沉淀',
+          '靠个人收藏（提示词收藏夹之类）',
+          '靠人手动整理（飞书文档 / Notion）',
+          'AI 半自动整理 + 人审',
+          'AI 全自动采集编译（聊天记录 / 文档自动入库）',
+          '一人输入、全员受益的共享上下文'
+        ] },
+      { id:'C16', part:'C', type:'single', title:'你公司有几条业务流程是 AI 跑通的？',
+        hint:'"AI 跑通"=从输入到输出，AI 能跑完全程，人只做审核。',
+        options:[
+          '0 条',
+          '1 条（内容生产 / 客服 / 销售 三选一）',
+          '2-3 条核心流程',
+          '4-6 条',
+          '7+ 条，AI 已经是生产力主体',
+          '产品 / 服务本身就是 AI 跑出来的，没"人版"对照'
+        ] },
+
+      // Part E — 4 简答（必填 2 选填 2）
+      { id:'E1', part:'E', type:'textarea', title:'拆解你最想 AI 改造的那条工作流',
+        hint:'按这 4 个问题答：① 现在怎么做的（谁干、几步）？② 一周大概多少时间？③ 你想让 AI 介入哪一步？④ 改完你希望变成什么样（算成数字最好）？',
+        placeholder:'250 字内，越具体诊断越准。例：现在 1 篇推文我自己写 4 小时，想让 AI 出初稿 + 我改最后一稿，目标月产 20 篇',
+        required:true, maxLen:250 },
+      { id:'E2', part:'E', type:'textarea', title:'讲一个具体场景：你想让团队用 AI 没推动的那次。',
+        hint:'越具体越好——跟谁说的、他怎么反应、你怎么处理的。这条会决定诊断书的"卡点"段。',
         placeholder:'200 字内，越具体越好', required:true, maxLen:200 },
-      { id:'D2', part:'D', type:'textarea', title:'未来 3 个月，你最想用 AI 解决哪件具体业务问题？算成数字是多少？',
-        hint:'PDF 原话：回报不是"效率提升"这种模糊概念，是具体的——比如"内容产量从月 4 篇到月 20 篇""客服响应从 30 分钟到 5 分钟"。模糊的"提效"不算。',
-        placeholder:'200 字内，写成可量化的目标', required:true, maxLen:200 },
-      { id:'D3', part:'D', type:'textarea', title:'你最想从这份诊断书里得到什么具体建议？',
-        hint:'选填。例如"该让谁先动""哪个部门先切""怎么说服员工""下一步该花多少钱"。诊断的最后一段会针对这条精确回答。',
+      { id:'E3', part:'E', type:'textarea', title:'你现在对 AI 化最真实的焦虑或疑问是什么？',
+        hint:'选填。不必装大问题——可以是"AI 出的内容总有股 AI 味"，也可以是"我害怕被 90 后员工反超"。',
+        placeholder:'选填，200 字内', required:false, maxLen:200 },
+      { id:'E4', part:'E', type:'textarea', title:'你最想从这份诊断书里得到什么具体建议？',
+        hint:'选填。例如"该让谁先动""哪个部门先切""怎么说服员工"。诊断最后一段会针对这条精确回答。',
         placeholder:'选填，200 字内', required:false, maxLen:200 },
     ];
 
@@ -829,23 +1085,23 @@
         <div class="card">
           <span class="cover-tag">30 人以下企业 · 老板 AI 化诊断</span>
           <h1 class="cover-title">你自己会用 AI，<br/><span class="highlight">为什么团队推不动？</span></h1>
-          <p class="cover-sub">5 分钟，定位你和你公司在 AI 化的哪个阶段（L1-L5）。<br/>测完拿到一份 <strong>专属于你的诊断书</strong>——真实位置、最大卡点、3 个可执行的下一步动作。</p>
+          <p class="cover-sub">10 分钟，定位你和你公司在 AI 化的哪个阶段（L1-L5），看 4 个板块的能力分布。<br/>测完拿到一份 <strong>专属于你的诊断书</strong>——真实位置、最大卡点、3 个可执行的下一步动作。</p>
 
           <div class="cover-points">
             <div class="cover-points-title">这份诊断书会告诉你</div>
             <ul>
               <li>你在 L1-L5 哪一阶段（90% 老板高估自己，标准很严）</li>
+              <li>4 板块能力分布：个人 / 团队 / 组织 / 系统 各打几分</li>
               <li>"推不动团队"卡在哪——管理问题还是认知问题</li>
-              <li>下一步该让谁先动、哪件事先切</li>
-              <li>未来 3 个月，可量化的回报算式</li>
+              <li>下一步该让谁先动、哪件事先切，可量化的回报算式</li>
               <li>测完领取《30 人以下企业 AI 转型实战指南》PDF</li>
             </ul>
           </div>
 
           <div class="cover-meta">
             <div class="meta-item"><div class="meta-num">${questions.length}</div><div class="meta-label">道题</div></div>
-            <div class="meta-item"><div class="meta-num">5</div><div class="meta-label">分钟</div></div>
-            <div class="meta-item"><div class="meta-num">L1-L5</div><div class="meta-label">阶段定位</div></div>
+            <div class="meta-item"><div class="meta-num">10</div><div class="meta-label">分钟</div></div>
+            <div class="meta-item"><div class="meta-num">L1-L5</div><div class="meta-label">阶段 + 4 板块</div></div>
           </div>
 
           <button class="btn btn-primary btn-large" onclick="next()">开始诊断 →</button>
@@ -955,6 +1211,34 @@
       `;
     }
 
+    // ===== Render: 4 板块能力图 =====
+    function renderDomainBars(domains) {
+      if (!domains) return '';
+      const rows = [
+        { key:'personal', label:'个人能力' },
+        { key:'team',     label:'团队渗透' },
+        { key:'org',      label:'组织重构' },
+        { key:'system',   label:'系统沉淀' },
+      ];
+      const classify = (s) => s < 25 ? 'weak' : s < 50 ? 'medium' : s < 75 ? 'strong' : 'excellent';
+      const body = rows.map(r => {
+        const s = Math.max(0, Math.min(100, Math.round(domains[r.key] ?? 0)));
+        return `
+          <div class="domain-row">
+            <span class="domain-label">${r.label}</span>
+            <div class="domain-bar"><div class="domain-bar-fill ${classify(s)}" style="width:${s}%"></div></div>
+            <span class="domain-score">${s}</span>
+          </div>
+        `;
+      }).join('');
+      return `
+        <div class="domain-wrap">
+          <div class="domain-wrap-title">4 板块能力分布<span class="domain-wrap-sub">满分 100</span></div>
+          ${body}
+        </div>
+      `;
+    }
+
     // ===== Render: Result =====
     function renderResult() {
       progressWrap.classList.add('hidden');
@@ -968,6 +1252,8 @@
             <div class="result-level-tagline">${r.tagline || ''}</div>
           </div>
 
+          ${renderDomainBars(r.domains)}
+
           <div class="result-content">${r.html}</div>
 
           <div class="result-footer">
@@ -975,14 +1261,14 @@
               <span class="cta-tag">📘 免费领取</span>
               <div class="cta-title">把这份诊断截图发我，<br/>送你《30 人以下企业 AI 转型实战指南》</div>
               <div class="cta-text">49 页 · 6 个部分 · 18 个实战动作。不讲工具评测，讲 <strong>30 人以下团队怎么真的把 AI 跑起来</strong>——L1-L5 定位、3 个最贵的认知误区、六步走路线图、降到零学习成本的 3 种方法、内容/销售/知识/流程 4 个动作库。</div>
-              <div class="cta-text">这本指南是我们 6 人团队 + 18 个客户 <strong>真金白银踩出来的</strong>，不是道听途说。把你这份诊断截图发我，<strong>送你完整版 PDF + 基于你具体情况的 1 条关键建议</strong>。</div>
+              <div class="cta-text">这本指南是我们团队 + 18 个客户 <strong>真金白银踩出来的</strong>，不是道听途说。把你这份诊断截图发我，<strong>送你完整版 PDF + 基于你具体情况的 1 条关键建议</strong>。</div>
 
               <div class="cta-qr-wrap">
                 <img class="cta-qr-img" src="/qrcode.jpg" alt="卿小璐微信" loading="lazy">
                 <div class="cta-qr-info">
                   <div class="wechat-label">微信号</div>
                   <div class="wechat-id">qingxiaoluu</div>
-                  <div class="wechat-hint">扫码加我，<br/>备注「AI 测评」</div>
+                  <div class="wechat-hint">扫码加我，备注「AI 测评」</div>
                 </div>
               </div>
             </div>
