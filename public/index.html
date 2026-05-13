@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>企业 AI 原生化诊断 · 你公司在 AI 哪一级？</title>
-  <meta name="description" content="60 秒测出你公司的 AI 化水平，AI 出个性化诊断书。自然流 · 卿小璐 出品。">
+  <title>老板 AI 化诊断 · 你自己会用，为什么团队推不动？</title>
+  <meta name="description" content="30 人以下企业老板专属。5 分钟定位你在 L1-L5 哪个阶段，AI 出个性化诊断书。自然流 · 卿小璐 出品。">
 
   <style>
     /* ===== lulumoney brand tokens ===== */
@@ -741,66 +741,76 @@
   </div>
 
   <script>
-    // ===== Question Schema (20 题) =====
+    // ===== Question Schema (13 题) =====
+    // 框架：老板 AI 化 5 阶段（L1 围观 / L2 个人尝鲜 / L3 团队推行 / L4 组织重构 / L5 系统化运转）
+    // 反向设计：围绕受众真正关心的 3 个问题（团队怎么用 / 投入回报 / 非技术能不能）
     const questions = [
       // Part A — 基础信息
       { id:'A1', part:'A', type:'text', title:'怎么称呼你？',
         hint:'随便填，不会公开。', placeholder:'例如：小璐', required:true },
       { id:'A2', part:'A', type:'select', title:'你所在的行业？',
-        options:['内容/自媒体','电商/零售','教育/培训','咨询/服务','制造业','建筑/工程','互联网/科技','金融','医疗/健康','餐饮/快消','其他'],
+        options:['内容/自媒体','电商/零售','教育/培训','咨询/服务','制造业','建筑/工程','互联网/科技','金融','医疗/健康','餐饮/快消','本地生活/服务','其他'],
         required:true },
       { id:'A3', part:'A', type:'select', title:'公司规模？',
-        options:['独立创业者（1 人）','小团队（2-5 人）','小公司（6-20 人）','中型（21-100 人）','大型（101-500 人）','大企业（500+ 人）'],
+        hint:'按 PDF《30 人以下企业 AI 转型实战指南》的分层，规模决定协调成本。',
+        options:['1 人（独立创业者）','2-9 人（小团队）','10-30 人（小公司）','30-50 人','50-150 人','150+ 人'],
         required:true },
 
-      // Part B — 等级定位（10 道是/否，递进）
-      { id:'B1', part:'B', type:'yesno', title:'过去一周，公司里至少有一个人（包括你自己）用 AI 完成了一件具体的工作？',
-        hint:'真实写过 / 用过，不是"听说"或"刷过推文"。' },
-      { id:'B2', part:'B', type:'yesno', title:'公司在正式场合（例会 / 周报 / 全员信）讨论过"用 AI 做某事"？',
-        hint:'是公开议题，不是私下聊。' },
-      { id:'B3', part:'B', type:'yesno', title:'公司至少部署了 1 个 AI 工具（Copilot / 自建账号 / 企业版订阅）？',
-        hint:'是公司买的，不只是某个人自己掏钱订阅。' },
-      { id:'B4', part:'B', type:'yesno', title:'有至少一个部门在用这个工具，月活率超过 50%？',
-        hint:'不是 IT 报喜的覆盖率，是真实使用率。' },
-      { id:'B5', part:'B', type:'yesno', title:'公司至少有 2 个部门各自跑通了 AI 工作流，且效率提升可量化？',
-        hint:'比如"客服响应时长降 40%""内容产量翻 3 倍"这种。' },
-      { id:'B6', part:'B', type:'yesno', title:'公司有专人 / 专岗负责 AI 基础设施（知识库 / Prompt 库 / Skill 库），不是兼任？',
-        hint:'这个人的 KPI 是"让别人更快用 AI"，不是自己用得最厉害。' },
-      { id:'B7', part:'B', type:'yesno', title:'最近 3 个月，公司调整过岗位说明书或合并过岗位，原因是"AI 接管了一部分工作"？',
-        hint:'真的改了 JD 或减/并了岗位，不是只在脑子里想。' },
-      { id:'B8', part:'B', type:'yesno', title:'如果今天把所有 AI 工具撤掉，公司的产品形态 / 服务方式 / 收费模式会变样？',
-        hint:'不是"会变难做"，是"产品本身长得不一样"。' },
-      { id:'B9', part:'B', type:'yesno', title:'公司实际员工数 ≤ 5 人，但承担了传统 30+ 人的业务量？',
-        hint:'真的小团队大产出，不是外包/兼职凑数。' },
-      { id:'B10', part:'B', type:'yesno', title:'公司从注册第一天起就是按 AI-native 设计的，没有"AI 化"这个动作？',
-        hint:'从 0 设计就是 AI 原生，不是后期改造。' },
+      // Part B — 5 阶段定位（4 道是/否，递进）—— 严格定义，逼老板诚实
+      { id:'B1', part:'B', type:'yesno', title:'上周，你自己用 AI 完成过至少一件具体的工作交付？',
+        hint:'"完成具体交付"指实际拿出可用的东西——一篇推文、一份方案、一段代码、一个客户回复，不是聊聊试试。' },
+      { id:'B2', part:'B', type:'yesno', title:'你的团队，过去 1 个月里，至少 50% 的人在日常工作中实际用 AI？',
+        hint:'PDF 原话：90% 老板高估自己阶段，标准很简单——团队每天工作离不开 AI 才算。周培训用一下、几个先锋在用，都不算。' },
+      { id:'B3', part:'B', type:'yesno', title:'因为 AI 跑通了，过去 3 个月你调整过岗位 / 改过 JD / 合并过岗位？',
+        hint:'真的改了招聘标准或减并了岗位，不是脑子里想想。组织结构开始跟着 AI 变形。' },
+      { id:'B4', part:'B', type:'yesno', title:'你公司有一个共享的 AI 大脑——团队任何人都能调用公司的判断库 / 案例库 / 话术库？',
+        hint:'不是个人的提示词收藏，是公司层的共享上下文。一人输入，全员受益。' },
 
-      // Part C — 多维补充
-      { id:'C1', part:'C', type:'multi', title:'公司里用过哪些 AI 工具？',
-        hint:'多选，包括个人订阅 + 公司部署。',
-        options:['ChatGPT','Claude','豆包','Kimi','DeepSeek','文心一言','元宝','Copilot','Cursor','Coze','Dify','MidJourney','Sora','即梦','其他','都没用过'] },
-      { id:'C2', part:'C', type:'multi', title:'AI 已经嵌入哪些业务环节？',
-        hint:'多选。"嵌入"指流程的一部分，不是偶尔用一下。',
-        options:['写文章 / 内容','客服','招聘 / HR','数据分析','编程 / 开发','设计 / 出图','财务','销售','产品 / 研发','培训','其他','都没嵌入'] },
-      { id:'C3', part:'C', type:'single', title:'老板个人 AI 水平 vs 公司整体？',
-        hint:'诚实回答，这是诊断"内外差"的关键。',
-        options:['差不多','老板略高一些','老板明显高出一截','天差地别（老板单飞）','老板还不如员工'] },
+      // Part C — 公司现状（3 题）— 围绕"3 个真正关心的问题"
+      { id:'C1', part:'C', type:'single', title:'问题 1：让团队用起来——你现在卡在哪？',
+        hint:'PDF 原话：推动团队 AI 化不是培训问题，是管理问题。',
+        options:[
+          '我自己还没真正开始',
+          '我自己在用，没推过团队',
+          '推过，员工说"跟我没关系"，没下文了',
+          '推过，员工试一下就放弃了',
+          '少数几个人在用，多数人不用',
+          '全员每天都在用'
+        ] },
+      { id:'C2', part:'C', type:'single', title:'问题 2：投入回报——你最想让 AI 把哪件事的速度或成本变好？',
+        hint:'选一个最痛、最重复、你每天都在做的。后面会让你算个具体数字。',
+        options:[
+          '内容生产（推文/视频/物料）',
+          '销售管理（线索/转化/外呼）',
+          '客户管理（私域/SOP/CRM）',
+          '客服（响应/分流）',
+          '知识管理（沉淀方法论/复制经验）',
+          '内部协作（会议/文档/流程）',
+          '招聘/HR',
+          '财务/数据分析',
+          '产品研发/设计',
+          '其他'
+        ] },
+      { id:'C3', part:'C', type:'single', title:'问题 3：非技术能不能搞——你和团队的技术底子？',
+        hint:'PDF 原话：2026 年的 AI 不需要懂技术，门槛在认知和决心。但你诚实告诉我现状，AI 会用你听得懂的话给建议。',
+        options:[
+          '都没技术背景，怕搞不来',
+          '我懂一点，团队完全不懂',
+          '我懂技术，团队不懂',
+          '大家都不算技术，但学习能力还行',
+          '团队里有几个挺会折腾 AI 的',
+          '团队有 IT/开发顶大头'
+        ] },
 
-      // Part D — 开放题（5 道）
-      { id:'D1', part:'D', type:'textarea', title:'你公司用 AI 最大的卡点是什么？',
-        hint:'越具体越好——AI 会基于这条给你"个性化诊断"。例如："员工觉得 AI 不靠谱，让他用他就糊弄。"',
+      // Part D — 开放题（3 题，必填 2 选填 1）
+      { id:'D1', part:'D', type:'textarea', title:'讲一个具体场景：你尝试让团队用 AI，最后没推动的那一次。',
+        hint:'越具体越好。例如："上次让客服用 AI 回客户消息，他说『AI 答的没人情味』就放弃了"。诊断书会基于这条给你回应。',
         placeholder:'200 字内，越具体越好', required:true, maxLen:200 },
-      { id:'D2', part:'D', type:'textarea', title:'未来 3-6 个月，你最想用 AI 解决的具体业务问题？',
-        hint:'比如："把公众号内容产量从月 4 篇提到月 20 篇""客服响应时间砍一半""自动出销售线索"。越具体，诊断越能给你可执行的路径。',
-        placeholder:'200 字内', required:true, maxLen:200 },
-      { id:'D3', part:'D', type:'textarea', title:'在 AI 落地的过程中，你或你的团队踩过什么坑？',
-        hint:'选填。说说你们试过什么、为什么失败——这能让 AI 避免给你重复的建议。',
-        placeholder:'选填，200 字内', required:false, maxLen:200 },
-      { id:'D4', part:'D', type:'textarea', title:'你公司里"最适合先开始用 AI"的人 / 部门是谁？',
-        hint:'选填。如果你心里已经有人选，写出来。AI 会基于这个给你"启动顺序"建议。',
-        placeholder:'选填，200 字内', required:false, maxLen:200 },
-      { id:'D5', part:'D', type:'textarea', title:'你最想从这份诊断书里得到什么具体建议？',
-        hint:'选填。比如"下一季度该投谁去学 AI""哪个部门先动手""怎么说服老板加预算"。',
+      { id:'D2', part:'D', type:'textarea', title:'未来 3 个月，你最想用 AI 解决哪件具体业务问题？算成数字是多少？',
+        hint:'PDF 原话：回报不是"效率提升"这种模糊概念，是具体的——比如"内容产量从月 4 篇到月 20 篇""客服响应从 30 分钟到 5 分钟"。模糊的"提效"不算。',
+        placeholder:'200 字内，写成可量化的目标', required:true, maxLen:200 },
+      { id:'D3', part:'D', type:'textarea', title:'你最想从这份诊断书里得到什么具体建议？',
+        hint:'选填。例如"该让谁先动""哪个部门先切""怎么说服员工""下一步该花多少钱"。诊断的最后一段会针对这条精确回答。',
         placeholder:'选填，200 字内', required:false, maxLen:200 },
     ];
 
@@ -817,25 +827,25 @@
       progressWrap.classList.add('hidden');
       app.innerHTML = `
         <div class="card">
-          <span class="cover-tag">企业 AI 原生化诊断 · 免费</span>
-          <h1 class="cover-title">你公司在 AI 哪一级？<br/><span class="highlight">95% 的公司，卡在同一个地方。</span></h1>
-          <p class="cover-sub">10 分钟，测出你公司的 AI 化等级。<br/>测完拿到一份 <strong>专属于你的诊断书</strong>——等级判定、最大卡点、可执行的 3 个动作。</p>
+          <span class="cover-tag">30 人以下企业 · 老板 AI 化诊断</span>
+          <h1 class="cover-title">你自己会用 AI，<br/><span class="highlight">为什么团队推不动？</span></h1>
+          <p class="cover-sub">5 分钟，定位你和你公司在 AI 化的哪个阶段（L1-L5）。<br/>测完拿到一份 <strong>专属于你的诊断书</strong>——真实位置、最大卡点、3 个可执行的下一步动作。</p>
 
           <div class="cover-points">
             <div class="cover-points-title">这份诊断书会告诉你</div>
             <ul>
-              <li>你公司目前在 AI 化的哪一级（11 级体系）</li>
-              <li>跟你同行业 / 同规模的公司比，你是领先还是落后</li>
-              <li>下一级最难跨的那道坎，具体是什么</li>
-              <li>未来 3 个月，你应该先动哪个部门</li>
-              <li>测完可领取《企业 AI 化改造白皮书》</li>
+              <li>你在 L1-L5 哪一阶段（90% 老板高估自己，标准很严）</li>
+              <li>"推不动团队"卡在哪——管理问题还是认知问题</li>
+              <li>下一步该让谁先动、哪件事先切</li>
+              <li>未来 3 个月，可量化的回报算式</li>
+              <li>测完领取《30 人以下企业 AI 转型实战指南》PDF</li>
             </ul>
           </div>
 
           <div class="cover-meta">
             <div class="meta-item"><div class="meta-num">${questions.length}</div><div class="meta-label">道题</div></div>
-            <div class="meta-item"><div class="meta-num">10</div><div class="meta-label">分钟</div></div>
-            <div class="meta-item"><div class="meta-num">11</div><div class="meta-label">等级判定</div></div>
+            <div class="meta-item"><div class="meta-num">5</div><div class="meta-label">分钟</div></div>
+            <div class="meta-item"><div class="meta-num">L1-L5</div><div class="meta-label">阶段定位</div></div>
           </div>
 
           <button class="btn btn-primary btn-large" onclick="next()">开始诊断 →</button>
@@ -952,8 +962,8 @@
       app.innerHTML = `
         <div class="card">
           <div class="result-header">
-            <div class="result-badge">企业 AI 原生化诊断书</div>
-            <div class="result-level-num">Lv.${r.level}</div>
+            <div class="result-badge">老板 AI 化诊断书</div>
+            <div class="result-level-num">L${r.level}</div>
             <div class="result-level-name">${r.levelName}</div>
             <div class="result-level-tagline">${r.tagline || ''}</div>
           </div>
@@ -963,9 +973,9 @@
           <div class="result-footer">
             <div class="cta-box">
               <span class="cta-tag">📘 免费领取</span>
-              <div class="cta-title">把这份诊断截图发我，<br/>送你一份《企业 AI 化改造白皮书》</div>
-              <div class="cta-text">这份诊断书是 AI 实时生成的<strong>通用版</strong>。如果想要 <strong>基于你的等级、行业、卡点</strong> 给一对一的具体建议，加我微信。</div>
-              <div class="cta-text">我正在大量收集各行业企业 AI 应用的真实场景和卡点。把你这份诊断截图发我，<strong>我送你一份完整版《企业 AI 化改造白皮书》</strong>，并基于你的具体情况给你 1 条最关键的建议。</div>
+              <div class="cta-title">把这份诊断截图发我，<br/>送你《30 人以下企业 AI 转型实战指南》</div>
+              <div class="cta-text">49 页 · 6 个部分 · 18 个实战动作。不讲工具评测，讲 <strong>30 人以下团队怎么真的把 AI 跑起来</strong>——L1-L5 定位、3 个最贵的认知误区、六步走路线图、降到零学习成本的 3 种方法、内容/销售/知识/流程 4 个动作库。</div>
+              <div class="cta-text">这本指南是我们 6 人团队 + 18 个客户 <strong>真金白银踩出来的</strong>，不是道听途说。把你这份诊断截图发我，<strong>送你完整版 PDF + 基于你具体情况的 1 条关键建议</strong>。</div>
 
               <div class="cta-qr-wrap">
                 <img class="cta-qr-img" src="/qrcode.jpg" alt="卿小璐微信" loading="lazy">
@@ -1086,7 +1096,7 @@
       const r = state.result;
       const tmp = document.createElement('div');
       tmp.innerHTML = r.html;
-      const text = `【企业 AI 原生化诊断书】\n\nLv.${r.level} · ${r.levelName}\n${r.tagline||''}\n\n${tmp.innerText}\n\n— 自然流 · 卿小璐\n微信：qingxiaoluu`;
+      const text = `【老板 AI 化诊断书】\n\nL${r.level} · ${r.levelName}\n${r.tagline||''}\n\n${tmp.innerText}\n\n— 自然流 · 卿小璐\n微信：qingxiaoluu`;
       navigator.clipboard.writeText(text).then(() => alert('已复制到剪贴板'));
     };
 
