@@ -412,17 +412,18 @@ module.exports = async (req, res) => {
     md = md.replace(/^```[a-z]*\n?/i, '').replace(/\n?```$/, '');
     const html = mdToHtml(md);
 
-    // fire-and-forget write to Feishu Base — 失败不影响用户拿到诊断
-    writeFeishu(answers, lvInfo, domains, info, md)
-      .then(r => {
-        if (r.skipped) console.warn('FEISHU_SKIPPED', submissionId, r.reason);
-        else console.log('FEISHU_OK', submissionId, r.record_id);
-      })
-      .catch(e => {
-        // 兜底 2：飞书写入失败，打超显眼标签 + 完整诊断 markdown，方便 vercel logs --since=Xh | grep FEISHU_FAILED 捞回
-        console.error('FEISHU_FAILED', submissionId, e.message);
-        console.error('FEISHU_FAILED_DATA', JSON.stringify({ submissionId, answers, lvInfo, domains, md }));
-      });
+    // await 写飞书（不再 fire-and-forget）—— Vercel serverless 在 response 后会立刻冻结进程，
+    // fire-and-forget Promise 根本来不及完成，会造成数据丢失。
+    // 写失败不影响返回诊断书（catch 住），但等它跑完再 return。
+    try {
+      const r = await writeFeishu(answers, lvInfo, domains, info, md);
+      if (r.skipped) console.warn('FEISHU_SKIPPED', submissionId, r.reason);
+      else console.log('FEISHU_OK', submissionId, r.record_id);
+    } catch (e) {
+      // 兜底 2：飞书写入失败，打超显眼标签 + 完整诊断 markdown
+      console.error('FEISHU_FAILED', submissionId, e.message);
+      console.error('FEISHU_FAILED_DATA', JSON.stringify({ submissionId, answers, lvInfo, domains, md }));
+    }
 
     return res.status(200).json({
       level: lvInfo.lv,
